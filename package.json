@@ -1,0 +1,27 @@
+{
+  "name": "apis",
+  "version": "1.0.0",
+  "description": "create-apis",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/gouravsh7568/crema-project.git"
+  },
+  "author": "gaurav",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/gouravsh7568/crema-project/issues"
+  },
+  "homepage": "https://gitlab.com/gouravsh7568/crema-project#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.4.0",
+    "morgan": "^1.10.0",
+    "node": "^20.14.0"
+  }
+}
