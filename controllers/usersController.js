@@ -1,8 +1,9 @@
-const fs = require("fs");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const users = JSON.parse(fs.readFileSync("data.json", "utf-8")).users;
-const SECRET_KEY = "Gaurav"; // Ideally, store this in an environment variable
+const User = require("../models/userModel");
+require("dotenv").config();
+
+const SECRET_KEY = process.env.SECRET_KEY;
 
 const createUser = async (req, res) => {
   const {
@@ -28,8 +29,8 @@ const createUser = async (req, res) => {
   } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = {
-    id: users.length + 1,
+
+  const newUser = new User({
     firstName,
     lastName,
     maidenName,
@@ -49,27 +50,48 @@ const createUser = async (req, res) => {
     domain,
     ip,
     address,
-  };
+  });
 
-  users.push(newUser);
-  fs.writeFileSync("data.json", JSON.stringify({ users }), "utf-8");
-  res.status(201).json({ message: "User successfully created", user: newUser });
+  try {
+    const savedUser = await newUser.save();
+    res
+      .status(201)
+      .json({ message: "User successfully created", user: savedUser });
+  } catch (error) {
+    res.status(400).json({ message: "Error creating user", error });
+  }
 };
 
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
-  const user = users.find((u) => u.username === username);
-  if (!user) {
-    return res.status(400).json({ message: "Invalid credentials" });
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Invalid credentials: User not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res
+        .status(400)
+        .json({ message: "Invalid credentials: Incorrect password" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+    res.json({ message: "Login successful", token });
+  } catch (error) {
+    console.error("Error during login:", error); // Log the error details
+    res.status(500).json({ message: "Error logging in", error: error.message });
   }
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
-  const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, {
-    expiresIn: "1h",
-  });
-  res.json({ message: "Login successful", token });
 };
 
 const authenticateToken = (req, res, next) => {
@@ -83,69 +105,90 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-const getUsers = (req, res) => {
+const fetchUsers = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
 
-  const paginatedUsers = users.slice(startIndex, endIndex);
-  res.json({
-    pagination: {
-      page,
-      limit,
-      totalUsers: users.length,
-      totalPages: Math.ceil(users.length / limit),
-    },
-    users: paginatedUsers,
-  });
-};
-
-const getUserById = (req, res) => {
-  const id = +req.params.id;
-  const user = users.find((p) => p.id === id);
-  if (user) {
-    res.json({ message: "User found", user });
-  } else {
-    res.status(404).json({ message: "User not found" });
+  try {
+    const users = await User.find().limit(limit).skip(startIndex).exec();
+    const totalUsers = await User.countDocuments().exec();
+    res.json({
+      pagination: {
+        page,
+        limit,
+        totalUsers,
+        totalPages: Math.ceil(totalUsers / limit),
+      },
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users", error });
   }
 };
 
-const updateUser = (req, res) => {
-  const id = +req.params.id;
-  const userIndex = users.findIndex((p) => p.id === id);
-  if (userIndex !== -1) {
-    users.splice(userIndex, 1, { ...req.body, id: id });
-    fs.writeFileSync("data.json", JSON.stringify({ users }), "utf-8");
-    res.status(200).json({ message: "User updated successfully" });
-  } else {
-    res.status(404).json({ message: "User not found" });
+const getUserById = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findById(id);
+    if (user) {
+      res.json({ message: "User found", user });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user by ID", error });
   }
 };
 
-const updateUserPartial = (req, res) => {
-  const id = +req.params.id;
-  const userIndex = users.findIndex((p) => p.id === id);
-  if (userIndex !== -1) {
-    const user = users[userIndex];
-    users.splice(userIndex, 1, { ...user, ...req.body });
-    fs.writeFileSync("data.json", JSON.stringify({ users }), "utf-8");
-    res.status(200).json({ message: "User updated successfully" });
-  } else {
-    res.status(404).json({ message: "User not found" });
+const updateUser = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findByIdAndUpdate(id, req.body, { new: true });
+    if (user) {
+      res.json({ message: "User updated successfully", user });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error updating user", error });
   }
 };
 
-const deleteUser = (req, res) => {
-  const id = +req.params.id;
-  const userIndex = users.findIndex((p) => p.id === id);
-  if (userIndex !== -1) {
-    const user = users[userIndex];
-    users.splice(userIndex, 1);
-    fs.writeFileSync("data.json", JSON.stringify({ users }), "utf-8");
-    res.status(200).json({ message: "User deleted successfully", user });
-  } else {
-    res.status(404).json({ message: "User not found" });
+const updateUserPartial = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true }
+    );
+    if (user) {
+      res.json({ message: "User updated successfully", user });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error updating user", error });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findByIdAndDelete(id);
+    if (user) {
+      res.json({ message: "User deleted successfully", user });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting user", error });
   }
 };
 
@@ -153,7 +196,7 @@ module.exports = {
   createUser,
   loginUser,
   authenticateToken,
-  getUsers,
+  fetchUsers,
   getUserById,
   updateUser,
   updateUserPartial,

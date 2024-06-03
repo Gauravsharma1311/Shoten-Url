@@ -4,7 +4,7 @@ const usersController = require("../controllers/usersController");
 
 router.post("/", usersController.createUser);
 router.post("/login", usersController.loginUser);
-router.get("/", usersController.authenticateToken, usersController.getUsers);
+router.get("/", usersController.authenticateToken, usersController.fetchUsers);
 router.get(
   "/:id",
   usersController.authenticateToken,
