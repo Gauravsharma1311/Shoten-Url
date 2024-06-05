@@ -18,14 +18,7 @@ const createUser = async (req, res) => {
     password,
     birthDate,
     image,
-    bloodGroup,
-    height,
-    weight,
-    eyeColor,
-    hair,
     domain,
-    ip,
-    address,
   } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -42,23 +35,20 @@ const createUser = async (req, res) => {
     password: hashedPassword,
     birthDate,
     image,
-    bloodGroup,
-    height,
-    weight,
-    eyeColor,
-    hair,
     domain,
-    ip,
-    address,
   });
 
   try {
     const savedUser = await newUser.save();
+    const user = savedUser.toObject();
+    delete user.__v;
     res
       .status(201)
-      .json({ message: "User successfully created", user: savedUser });
+      .json({ message: "User successfully created", user, status: 201 });
   } catch (error) {
-    res.status(400).json({ message: "Error creating user", error });
+    res
+      .status(400)
+      .json({ message: "Error creating user", error, status: 400 });
   }
 };
 
@@ -66,40 +56,60 @@ const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).select("-__v");
     if (!user) {
       return res
         .status(400)
-        .json({ message: "Invalid credentials: User not found" });
+        .json({ message: "Invalid credentials: User not found", status: 400 });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ message: "Invalid credentials: Incorrect password" });
+      return res.status(400).json({
+        message: "Invalid credentials: Incorrect password",
+        status: 400,
+      });
     }
 
     const token = jwt.sign(
       { id: user._id, username: user.username },
       SECRET_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "48h",
       }
     );
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful", token, status: 200 });
   } catch (error) {
-    console.error("Error during login:", error); // Log the error details
-    res.status(500).json({ message: "Error logging in", error: error.message });
+    console.error("Error during login:", error);
+    res
+      .status(500)
+      .json({ message: "Error logging in", error: error.message, status: 500 });
   }
 };
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
+  if (token == null) {
+    return res.status(401).json({
+      error: {
+        code: "UNAUTHENTICATED",
+        message: "Invalid token",
+      },
+      status: 401,
+    });
+  }
+
   jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.sendStatus(403);
+    if (err) {
+      return res.status(401).json({
+        error: {
+          code: "UNAUTHENTICATED",
+          message: "Invalid token",
+        },
+        status: 401,
+      });
+    }
     req.user = user;
     next();
   });
@@ -109,22 +119,41 @@ const fetchUsers = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
+  const endIndex = page * limit;
 
   try {
-    const users = await User.find().limit(limit).skip(startIndex).exec();
+    const users = await User.find()
+      .select("-__v")
+      .limit(limit)
+      .skip(startIndex)
+      .exec();
     const totalUsers = await User.countDocuments().exec();
+
+    const usersWithoutAddressId = users.map((user) => {
+      const userObj = user.toObject();
+      if (userObj.address) {
+        delete userObj.address._id;
+      }
+      return userObj;
+    });
+
     res.json({
+      message: "Users fetched successfully",
       pagination: {
         page,
         limit,
+        startIndex,
+        endIndex: endIndex > totalUsers ? totalUsers : endIndex,
         totalUsers,
         totalPages: Math.ceil(totalUsers / limit),
       },
-      users,
+      users: usersWithoutAddressId,
+      status: 200,
     });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching users", error });
+    res
+      .status(500)
+      .json({ message: "Error fetching users", error, status: 500 });
   }
 };
 
@@ -132,14 +161,21 @@ const getUserById = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(id).select("-__v");
     if (user) {
-      res.json({ message: "User found", user });
+      const userObj = user.toObject();
+      delete userObj.__v;
+      if (userObj.address) {
+        delete userObj.address._id;
+      }
+      res.json({ message: "User found", user: userObj, status: 200 });
     } else {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "User not found", status: 404 });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error fetching user by ID", error });
+    res
+      .status(500)
+      .json({ message: "Error fetching user by ID", error, status: 500 });
   }
 };
 
@@ -147,14 +183,26 @@ const updateUser = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const user = await User.findByIdAndUpdate(id, req.body, { new: true });
+    const user = await User.findByIdAndUpdate(id, req.body, {
+      new: true,
+    }).select("-__v");
     if (user) {
-      res.json({ message: "User updated successfully", user });
+      const userObj = user.toObject();
+      if (userObj.address) {
+        delete userObj.address._id;
+      }
+      res.json({
+        message: "User updated successfully",
+        user: userObj,
+        status: 200,
+      });
     } else {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "User not found", status: 404 });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error updating user", error });
+    res
+      .status(500)
+      .json({ message: "Error updating user", error, status: 500 });
   }
 };
 
@@ -166,14 +214,24 @@ const updateUserPartial = async (req, res) => {
       id,
       { $set: req.body },
       { new: true }
-    );
+    ).select("-__v");
     if (user) {
-      res.json({ message: "User updated successfully", user });
+      const userObj = user.toObject();
+      if (userObj.address) {
+        delete userObj.address._id;
+      }
+      res.json({
+        message: "User updated successfully",
+        user: userObj,
+        status: 200,
+      });
     } else {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "User not found", status: 404 });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error updating user", error });
+    res
+      .status(500)
+      .json({ message: "Error updating user", error, status: 500 });
   }
 };
 
@@ -181,14 +239,16 @@ const deleteUser = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const user = await User.findByIdAndDelete(id);
+    const user = await User.findByIdAndDelete(id).select("-__v");
     if (user) {
-      res.json({ message: "User deleted successfully", user });
+      res.json({ message: "User deleted successfully", user, status: 200 });
     } else {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "User not found", status: 404 });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error deleting user", error });
+    res
+      .status(500)
+      .json({ message: "Error deleting user", error, status: 500 });
   }
 };
 
