@@ -44,8 +44,10 @@ const loginUser = async (req, res) => {
 };
 
 const fetchUsers = async (req, res) => {
+  const filters = req.query;
+
   try {
-    const users = await userService.fetchUsers();
+    const users = await userService.fetchUsers(filters);
     res.json({
       message: "Users fetched successfully",
       users,

@@ -60,8 +60,19 @@ const loginUser = async (username, password) => {
   return token;
 };
 
-const fetchUsers = async () => {
-  return await prisma.user.findMany();
+const fetchUsers = async (filters) => {
+  const where = {};
+
+  if (filters.firstName)
+    where.firstName = { contains: filters.firstName, mode: "insensitive" };
+  if (filters.phone)
+    where.phone = { contains: filters.phone, mode: "insensitive" };
+  if (filters.email)
+    where.email = { contains: filters.email, mode: "insensitive" };
+  if (filters.username)
+    where.username = { contains: filters.username, mode: "insensitive" };
+
+  return await prisma.user.findMany({ where });
 };
 
 const getUserById = async (id) => {
