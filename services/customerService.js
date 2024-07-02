@@ -11,8 +11,22 @@ const createCustomer = async (firstName, lastName, email) => {
   return await prisma.customer.create({ data: { firstName, lastName, email } });
 };
 
-const fetchCustomers = async () => {
-  return await prisma.customer.findMany();
+const fetchCustomers = async (filters) => {
+  const where = {};
+
+  if (filters.firstName) {
+    where.firstName = { contains: filters.firstName, mode: "insensitive" };
+  }
+
+  if (filters.lastName) {
+    where.lastName = { contains: filters.lastName, mode: "insensitive" };
+  }
+
+  if (filters.email) {
+    where.email = { contains: filters.email, mode: "insensitive" };
+  }
+
+  return await prisma.customer.findMany({ where });
 };
 
 const getCustomerById = async (id) => {

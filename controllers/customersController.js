@@ -26,8 +26,10 @@ const createCustomer = async (req, res) => {
 };
 
 const fetchCustomers = async (req, res) => {
+  const filters = req.query;
+
   try {
-    const customers = await customerService.fetchCustomers();
+    const customers = await customerService.fetchCustomers(filters);
     res.json({
       message: "Customers fetched successfully",
       customers,
