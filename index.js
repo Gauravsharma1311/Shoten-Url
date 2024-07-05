@@ -1,29 +1,19 @@
 const express = require("express");
-const morgan = require("morgan");
-const cors = require("cors");
-const mongoose = require("mongoose");
 require("dotenv").config();
-
+const bodyParser = require("body-parser");
+const config = require("./config");
+const customersRouter = require("./routes/customersRouter");
+const urlRouter = require("./routes/urlRouter");
 const usersRouter = require("./routes/usersRouter");
 
-const server = express();
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+app.use("/api/customers", customersRouter);
+app.use("/api/urls", urlRouter);
+app.use("/api/users", usersRouter);
 
-server.use(cors());
-server.use(express.json());
-server.use(morgan("dev"));
-server.use(express.static("public"));
-
-server.use("/users", usersRouter);
-
-const PORT = process.env.PORT || 2100;
-server.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
 });
