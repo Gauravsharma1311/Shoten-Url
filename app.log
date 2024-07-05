@@ -1,0 +1,4 @@
+2024-07-05T16:11:52.735Z [31merror[39m: Validation errors: [{"undefined":"First name is required"}]
+2024-07-05T16:12:09.997Z [31merror[39m: Validation errors: [{"undefined":"Valid email is required"}]
+2024-07-05T16:12:18.170Z [31merror[39m: Validation errors: [{"undefined":"Phone number is required"}]
+2024-07-05T16:12:39.091Z [31merror[39m: Validation errors: [{"undefined":"Username is required"}]

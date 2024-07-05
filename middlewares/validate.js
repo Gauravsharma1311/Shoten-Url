@@ -1,6 +1,19 @@
-const errorHandler = (err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ message: "An unexpected error occurred" });
+const { validationResult } = require("express-validator");
+const logger = require("../utils/logger");
+
+const validate = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const extractedErrors = [];
+    errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
+
+    logger.error(`Validation errors: ${JSON.stringify(extractedErrors)}`);
+
+    return res.status(422).json({
+      errors: extractedErrors,
+    });
+  }
+  next();
 };
 
-module.exports = errorHandler;
+module.exports = validate;
