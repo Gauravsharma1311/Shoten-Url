@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const bodyParser = require("body-parser");
 const config = require("./config");
 const customersRouter = require("./routes/customersRouter");

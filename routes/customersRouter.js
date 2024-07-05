@@ -1,19 +1,38 @@
 const express = require("express");
-const customersController = require("../controllers/customersController");
-const customerValidationRules = require("../validations/customerValidation");
-const validate = require("../middlewares/validate");
-
 const router = express.Router();
+const customerController = require("../controllers/customersController");
+const { body } = require("express-validator");
+const validate = require("../middlewares/validate");
 
 router.post(
   "/",
-  customerValidationRules(),
-  validate,
-  customersController.createCustomer
+  [
+    body("firstName").notEmpty().withMessage("First name is required"),
+    body("lastName").notEmpty().withMessage("Last name is required"),
+    body("email").isEmail().withMessage("Invalid email"),
+    validate,
+  ],
+  customerController.createCustomer
 );
-router.get("/", customersController.fetchCustomers);
-router.get("/:id", customersController.getCustomerById);
-router.put("/:id", customersController.updateCustomer);
-router.delete("/:id", customersController.deleteCustomer);
+
+router.get("/", customerController.fetchCustomers);
+
+router.get("/:id", customerController.getCustomerById);
+
+router.put(
+  "/:id",
+  [
+    body("firstName")
+      .optional()
+      .notEmpty()
+      .withMessage("First name is required"),
+    body("lastName").optional().notEmpty().withMessage("Last name is required"),
+    body("email").optional().isEmail().withMessage("Invalid email"),
+    validate,
+  ],
+  customerController.updateCustomer
+);
+
+router.delete("/:id", customerController.deleteCustomer);
 
 module.exports = router;

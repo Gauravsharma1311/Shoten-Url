@@ -2,14 +2,15 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const storeURL = async (userId, url) => {
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) throw new Error("Invalid userId");
-
-  return await prisma.URL.create({ data: { userId, url } });
+  const newUrl = await prisma.url.create({
+    data: { userId: parseInt(userId), url },
+  });
+  return newUrl;
 };
 
 const fetchUrls = async () => {
-  return await prisma.URL.findMany();
+  const urls = await prisma.url.findMany();
+  return urls;
 };
 
 module.exports = { storeURL, fetchUrls };

@@ -1,10 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const urlController = require("../controllers/urlController");
-const urlValidationRules = require("../validations/urlValidation");
+const { body } = require("express-validator");
 const validate = require("../middlewares/validate");
 
-router.post("/", urlValidationRules(), validate, urlController.storeURL);
+router.post(
+  "/",
+  [body("url").isURL().withMessage("Invalid URL"), validate],
+  urlController.storeURL
+);
+
 router.get("/", urlController.fetchUrls);
 
 module.exports = router;

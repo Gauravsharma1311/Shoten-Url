@@ -1,8 +1,8 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { PrismaClient } = require("@prisma/client");
 const config = require("../config");
-const prisma = new PrismaClient();
 
 const createUser = async (
   firstName,
@@ -13,26 +13,8 @@ const createUser = async (
   username,
   password
 ) => {
-  const existingUserByEmail = await prisma.user.findUnique({
-    where: { email },
-  });
-  const existingUserByUsername = await prisma.user.findUnique({
-    where: { username },
-  });
-  const existingUserByPhone = await prisma.user.findUnique({
-    where: { phone },
-  });
-
-  if (existingUserByEmail)
-    throw new Error("User with this email already exists");
-  if (existingUserByUsername)
-    throw new Error("User with this username already exists");
-  if (existingUserByPhone)
-    throw new Error("User with this phone number already exists");
-
   const hashedPassword = await bcrypt.hash(password, 10);
-
-  return await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       firstName,
       lastName,
@@ -43,40 +25,40 @@ const createUser = async (
       password: hashedPassword,
     },
   });
+  return user;
 };
 
 const loginUser = async (username, password) => {
-  const user = await prisma.user.findUnique({ where: { username } });
-  if (!user) throw new Error("Invalid username or password");
+  const user = await prisma.user.findUnique({
+    where: { username },
+  });
+  if (!user) {
+    throw new Error("Invalid username or password");
+  }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) throw new Error("Invalid username or password");
+  if (!isPasswordValid) {
+    throw new Error("Invalid username or password");
+  }
 
-  const token = jwt.sign(
-    { id: user.id, username: user.username },
-    config.secretKey,
-    { expiresIn: "1h" }
-  );
+  const token = jwt.sign({ userId: user.id }, config.secretKey, {
+    expiresIn: "1h",
+  });
   return token;
 };
 
 const fetchUsers = async (filters) => {
-  const where = {};
-
-  if (filters.firstName)
-    where.firstName = { contains: filters.firstName, mode: "insensitive" };
-  if (filters.phone)
-    where.phone = { contains: filters.phone, mode: "insensitive" };
-  if (filters.email)
-    where.email = { contains: filters.email, mode: "insensitive" };
-  if (filters.username)
-    where.username = { contains: filters.username, mode: "insensitive" };
-
-  return await prisma.user.findMany({ where });
+  const users = await prisma.user.findMany({
+    where: filters,
+  });
+  return users;
 };
 
 const getUserById = async (id) => {
-  return await prisma.user.findUnique({ where: { id } });
+  const user = await prisma.user.findUnique({
+    where: { id: parseInt(id) },
+  });
+  return user;
 };
 
 const updateUser = async (
@@ -88,21 +70,26 @@ const updateUser = async (
   phone,
   username
 ) => {
-  return await prisma.user.update({
-    where: { id },
+  const user = await prisma.user.update({
+    where: { id: parseInt(id) },
     data: { firstName, lastName, maidenName, email, phone, username },
   });
+  return user;
 };
 
 const updateUserPartial = async (id, updateData) => {
-  return await prisma.user.update({
-    where: { id },
+  const user = await prisma.user.update({
+    where: { id: parseInt(id) },
     data: updateData,
   });
+  return user;
 };
 
 const deleteUser = async (id) => {
-  return await prisma.user.delete({ where: { id } });
+  const user = await prisma.user.delete({
+    where: { id: parseInt(id) },
+  });
+  return user;
 };
 
 module.exports = {

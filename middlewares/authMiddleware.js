@@ -4,15 +4,15 @@ const config = require("../config");
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (!token)
-    return res.status(401).json({ error: "Invalid token", status: 401 });
+
+  if (token == null)
+    return res.status(401).json({ message: "Unauthorized", status: 401 });
 
   jwt.verify(token, config.secretKey, (err, user) => {
-    if (err)
-      return res.status(401).json({ error: "Invalid token", status: 401 });
+    if (err) return res.status(403).json({ message: "Forbidden", status: 403 });
     req.user = user;
     next();
   });
 };
 
-module.exports = authenticateToken;
+module.exports = { authenticateToken };

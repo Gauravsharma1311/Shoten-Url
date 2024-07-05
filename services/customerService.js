@@ -2,46 +2,39 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createCustomer = async (firstName, lastName, email) => {
-  const existingCustomer = await prisma.customer.findUnique({
-    where: { email },
+  const customer = await prisma.customer.create({
+    data: { firstName, lastName, email },
   });
-  if (existingCustomer)
-    throw new Error("Customer with this email already exists");
-
-  return await prisma.customer.create({ data: { firstName, lastName, email } });
+  return customer;
 };
 
 const fetchCustomers = async (filters) => {
-  const where = {};
-
-  if (filters.firstName) {
-    where.firstName = { contains: filters.firstName, mode: "insensitive" };
-  }
-
-  if (filters.lastName) {
-    where.lastName = { contains: filters.lastName, mode: "insensitive" };
-  }
-
-  if (filters.email) {
-    where.email = { contains: filters.email, mode: "insensitive" };
-  }
-
-  return await prisma.customer.findMany({ where });
+  const customers = await prisma.customer.findMany({
+    where: filters,
+  });
+  return customers;
 };
 
 const getCustomerById = async (id) => {
-  return await prisma.customer.findUnique({ where: { id } });
+  const customer = await prisma.customer.findUnique({
+    where: { id: parseInt(id) },
+  });
+  return customer;
 };
 
 const updateCustomer = async (id, firstName, lastName, email) => {
-  return await prisma.customer.update({
-    where: { id },
+  const customer = await prisma.customer.update({
+    where: { id: parseInt(id) },
     data: { firstName, lastName, email },
   });
+  return customer;
 };
 
 const deleteCustomer = async (id) => {
-  return await prisma.customer.delete({ where: { id } });
+  const customer = await prisma.customer.delete({
+    where: { id: parseInt(id) },
+  });
+  return customer;
 };
 
 module.exports = {
