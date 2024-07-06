@@ -4,7 +4,7 @@ const storeURL = async (req, res) => {
   const { userId, url } = req.body;
 
   try {
-    const newUrl = await urlService.storeURL(userId, url);
+    const newUrl = await urlService.storeURL(userId, url); // Pass customerId to the service
     res.status(201).json({
       message: "URL successfully stored",
       url: newUrl,

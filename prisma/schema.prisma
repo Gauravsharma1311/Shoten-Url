@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("MYSQL_URI")
+  url      = env("DATABASE_URL")
 }
 
 model Customer {
@@ -14,7 +14,6 @@ model Customer {
   email     String @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  urls      Url[]
 }
 
 model User {
@@ -32,13 +31,11 @@ model User {
 }
 
 model Url {
-  id        Int      @id @default(autoincrement())
-  url       String
-  userId    Int
-  customerId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user      User     @relation(fields: [userId], references: [id])
-  customer  Customer @relation(fields: [customerId], references: [id])
+  id         Int      @id @default(autoincrement())
+  url        String
+  userId     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
 }
+
