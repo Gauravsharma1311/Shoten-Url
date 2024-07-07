@@ -6,18 +6,26 @@ const {
   userValidation,
   loginValidation,
 } = require("../validations/userValidation");
+const { authenticateToken } = require("../middlewares/authMiddleware");
 
 router.post("/", userValidation, validate, userController.createUser);
 router.post("/login", loginValidation, validate, userController.loginUser);
-router.get("/", userController.fetchUsers);
-router.get("/:id", userController.getUserById);
-router.put("/:id", userValidation, validate, userController.updateUser);
+router.get("/", authenticateToken, userController.fetchUsers);
+router.get("/:id", authenticateToken, userController.getUserById);
+router.put(
+  "/:id",
+  authenticateToken,
+  userValidation,
+  validate,
+  userController.updateUser
+);
 router.patch(
   "/:id",
+  authenticateToken,
   userValidation,
   validate,
   userController.updateUserPartial
 );
-router.delete("/:id", userController.deleteUser);
+router.delete("/:id", authenticateToken, userController.deleteUser);
 
 module.exports = router;

@@ -17,14 +17,14 @@ const fetchCustomers = async (filters) => {
 
 const getCustomerById = async (id) => {
   const customer = await prisma.customer.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: id },
   });
   return customer;
 };
 
 const updateCustomer = async (id, firstName, lastName, email) => {
   const customer = await prisma.customer.update({
-    where: { id: parseInt(id) },
+    where: { id: id },
     data: { firstName, lastName, email },
   });
   return customer;
@@ -32,7 +32,7 @@ const updateCustomer = async (id, firstName, lastName, email) => {
 
 const deleteCustomer = async (id) => {
   const customer = await prisma.customer.delete({
-    where: { id: parseInt(id) },
+    where: { id: id },
   });
   return customer;
 };
