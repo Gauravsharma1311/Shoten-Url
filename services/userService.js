@@ -56,7 +56,7 @@ const fetchUsers = async (filters) => {
 
 const getUserById = async (id) => {
   const user = await prisma.user.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: id },
   });
   return user;
 };
