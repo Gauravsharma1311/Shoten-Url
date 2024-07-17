@@ -1,4 +1,7 @@
 const userService = require("../services/userService");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient(); // Adjust the import according to your setup
+const bcrypt = require("bcrypt");
 
 const createUser = async (req, res) => {
   const { firstName, lastName, maidenName, email, phone, username, password } =
@@ -37,6 +40,89 @@ const loginUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Error logging in",
+      error: error.message,
+      status: 500,
+    });
+  }
+};
+
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const resetUrl = await userService.forgotPassword(email);
+    res.json({
+      message: "Password reset email sent",
+      resetUrl,
+      status: 200,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error sending password reset email",
+      error: error.message,
+      status: 500,
+    });
+  }
+};
+const resetPassword = async (req, res) => {
+  const { resetToken } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    console.log(`Reset token: ${resetToken}`); // Log the reset token
+    const user = await prisma.user.findFirst({
+      where: {
+        resetToken: resetToken,
+        resetTokenExpiry: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired password reset token",
+        status: 400,
+      });
+    }
+
+    console.log(`User found: ${user.email}`);
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log(`Hashed password: ${hashedPassword}`);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Password has been reset successfully",
+      status: 200,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error resetting password",
+      error: error.message,
+      status: 500,
+    });
+  }
+};
+
+const logoutUser = async (req, res) => {
+  try {
+    await userService.logoutUser(req);
+    res.json({
+      message: "Logout successful",
+      status: 200,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error logging out",
       error: error.message,
       status: 500,
     });
@@ -175,6 +261,9 @@ const deleteUser = async (req, res) => {
 module.exports = {
   createUser,
   loginUser,
+  forgotPassword,
+  resetPassword,
+  logoutUser,
   fetchUsers,
   getUserById,
   updateUser,

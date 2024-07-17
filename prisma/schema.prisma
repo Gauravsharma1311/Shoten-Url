@@ -23,6 +23,8 @@ model User {
   maidenName String?
   email      String   @unique
   phone      String
+  resetToken String? 
+  resetTokenExpiry   DateTime?
   username   String   @unique
   password   String
   createdAt  DateTime @default(now())

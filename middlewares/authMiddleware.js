@@ -8,7 +8,7 @@ const authenticateToken = (req, res, next) => {
   if (token == null) {
     return res.status(401).json({ message: "Unauthorized", status: 401 });
   }
-  next();
+
   jwt.verify(token, config.secretKey, (err, user) => {
     if (err) {
       console.error("JWT verification error:", err);

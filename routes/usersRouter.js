@@ -10,6 +10,9 @@ const { authenticateToken } = require("../middlewares/authMiddleware");
 
 router.post("/", userValidation, validate, userController.createUser);
 router.post("/login", loginValidation, validate, userController.loginUser);
+router.post("/forgot-password", userController.forgotPassword);
+router.post("/reset-password/:resetToken", userController.resetPassword);
+router.post("/logout", userController.logoutUser);
 router.get("/", authenticateToken, userController.fetchUsers);
 router.get("/:id", authenticateToken, userController.getUserById);
 router.put(
