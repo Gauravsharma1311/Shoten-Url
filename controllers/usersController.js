@@ -1,6 +1,6 @@
 const userService = require("../services/userService");
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient(); // Adjust the import according to your setup
+const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
 
 const createUser = async (req, res) => {
@@ -115,13 +115,25 @@ const resetPassword = async (req, res) => {
 
 const logoutUser = async (req, res) => {
   try {
-    await userService.logoutUser(req);
-    res.json({
-      message: "Logout successful",
-      status: 200,
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.status(500).json({
+          message: "Error logging out",
+          status: 500,
+          error: err.message,
+        });
+      }
+
+      res.clearCookie("connect.sid");
+      return res.status(200).json({
+        message: "Logged out successfully",
+        status: 200,
+      });
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Error logging out:", error);
+    return res.status(500).json({
       message: "Error logging out",
       error: error.message,
       status: 500,
@@ -257,6 +269,89 @@ const deleteUser = async (req, res) => {
     });
   }
 };
+const getProfile = async (req, res) => {
+  const { userId } = req.user;
+
+  try {
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        status: 404,
+      });
+    }
+    res.json({
+      message: "Profile fetched successfully",
+      user,
+      status: 200,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching profile",
+      error: error.message,
+      status: 500,
+    });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  const { userId } = req.user;
+  const { firstName, lastName, maidenName, email, phone, username } = req.body;
+
+  try {
+    const updatedUser = await userService.updateUser(
+      userId,
+      firstName,
+      lastName,
+      maidenName,
+      email,
+      phone,
+      username
+    );
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+        status: 404,
+      });
+    }
+    res.json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+      status: 200,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating profile",
+      error: error.message,
+      status: 500,
+    });
+  }
+};
+
+const deleteProfile = async (req, res) => {
+  const { userId } = req.user;
+
+  try {
+    const deletedUser = await userService.deleteUser(userId);
+    if (!deletedUser) {
+      return res.status(404).json({
+        message: "User not found",
+        status: 404,
+      });
+    }
+    res.json({
+      message: "Profile deleted successfully",
+      user: deletedUser,
+      status: 200,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error deleting profile",
+      error: error.message,
+      status: 500,
+    });
+  }
+};
 
 module.exports = {
   createUser,
@@ -269,4 +364,7 @@ module.exports = {
   updateUser,
   updateUserPartial,
   deleteUser,
+  getProfile,
+  updateProfile,
+  deleteProfile,
 };

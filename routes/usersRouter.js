@@ -31,4 +31,14 @@ router.patch(
 );
 router.delete("/:id", authenticateToken, userController.deleteUser);
 
+router.get("/profile", authenticateToken, userController.getProfile);
+router.put(
+  "/profile",
+  authenticateToken,
+  userValidation,
+  validate,
+  userController.updateProfile
+);
+router.delete("/profile", authenticateToken, userController.deleteProfile);
+
 module.exports = router;
