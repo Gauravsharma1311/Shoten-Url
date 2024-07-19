@@ -270,61 +270,47 @@ const deleteUser = async (req, res) => {
   }
 };
 const getProfile = async (req, res) => {
-  const { userId } = req.user;
-
   try {
-    const user = await userService.getUserById(userId);
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-        status: 404,
-      });
+    const userId = req.user.id;
+    logger.info(`Fetching profile for user ID: ${userId}`);
+
+    const profileData = await userService.getProfile(userId);
+
+    if (!profileData) {
+      logger.error("User not found while fetching profile.");
+      return res.status(404).json({ message: "User not found", status: 404 });
     }
+
     res.json({
       message: "Profile fetched successfully",
-      user,
+      profile: profileData,
       status: 200,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Error fetching profile",
-      error: error.message,
-      status: 500,
-    });
+    logger.error("Profile retrieval error:", error.message);
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
 const updateProfile = async (req, res) => {
-  const { userId } = req.user;
-  const { firstName, lastName, maidenName, email, phone, username } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
   try {
-    const updatedUser = await userService.updateUser(
-      userId,
-      firstName,
-      lastName,
-      maidenName,
-      email,
-      phone,
-      username
-    );
-    if (!updatedUser) {
-      return res.status(404).json({
-        message: "User not found",
-        status: 404,
-      });
+    const userId = req.user.id;
+    const updatedData = req.body;
+    const updatedProfile = await userService.updateProfile(userId, updatedData);
+
+    if (!updatedProfile) {
+      return res.status(404).json({ message: "User not found" });
     }
-    res.json({
-      message: "Profile updated successfully",
-      user: updatedUser,
-      status: 200,
-    });
+
+    res.json(updatedProfile);
   } catch (error) {
-    res.status(500).json({
-      message: "Error updating profile",
-      error: error.message,
-      status: 500,
-    });
+    logger.error("Profile update error:", error.message);
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
