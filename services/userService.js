@@ -157,55 +157,21 @@ const logoutUser = (req) => {
   req.user = null;
   return true;
 };
-const getProfile = async (userId) => {
+const getUserProfile = async (userId) => {
+  console.log(`Querying database for userId: ${userId}`);
+
   try {
-    logger.info(`Querying profile for user ID: ${userId}`);
     const user = await prisma.user.findUnique({
-      where: { id: userId }, // Ensure this matches the ID format
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        createdAt: true,
-      },
+      where: { id: userId }, // Ensure the userId is a String
     });
-
     if (!user) {
-      logger.error(`User not found in database for ID: ${userId}`);
-      return null;
+      console.log("User not found in the database");
+      throw new Error("User not found");
     }
-
-    logger.info(`Profile data retrieved for user ID: ${userId}`);
     return user;
   } catch (error) {
-    logger.error("Error retrieving profile:", error.message);
-    throw new Error("Error retrieving profile: " + error.message);
-  }
-};
-
-const updateProfile = async (userId, updatedData) => {
-  try {
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: updatedData,
-    });
-
-    if (!user) return null;
-
-    return {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phone: user.phone,
-      createdAt: user.createdAt,
-    };
-  } catch (error) {
-    throw new Error("Error updating profile: " + error.message);
+    console.log(`Error fetching user profile: ${error.message}`);
+    throw error;
   }
 };
 
@@ -220,6 +186,5 @@ module.exports = {
   updateUserPartial,
   deleteUser,
   logoutUser,
-  getProfile,
-  updateProfile,
+  getUserProfile,
 };

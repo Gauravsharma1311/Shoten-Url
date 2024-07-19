@@ -269,70 +269,24 @@ const deleteUser = async (req, res) => {
     });
   }
 };
-const getProfile = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    logger.info(`Fetching profile for user ID: ${userId}`);
-
-    const profileData = await userService.getProfile(userId);
-
-    if (!profileData) {
-      logger.error("User not found while fetching profile.");
-      return res.status(404).json({ message: "User not found", status: 404 });
-    }
-
-    res.json({
-      message: "Profile fetched successfully",
-      profile: profileData,
-      status: 200,
-    });
-  } catch (error) {
-    logger.error("Profile retrieval error:", error.message);
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
-};
-
-const updateProfile = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  try {
-    const userId = req.user.id;
-    const updatedData = req.body;
-    const updatedProfile = await userService.updateProfile(userId, updatedData);
-
-    if (!updatedProfile) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.json(updatedProfile);
-  } catch (error) {
-    logger.error("Profile update error:", error.message);
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
-};
-
-const deleteProfile = async (req, res) => {
+const getUserProfile = async (req, res) => {
   const { userId } = req.user;
 
+  console.log(`Fetching profile for userId: ${userId}`);
+
   try {
-    const deletedUser = await userService.deleteUser(userId);
-    if (!deletedUser) {
-      return res.status(404).json({
-        message: "User not found",
-        status: 404,
-      });
+    const user = await userService.getUserProfile(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found", status: 404 });
     }
     res.json({
-      message: "Profile deleted successfully",
-      user: deletedUser,
+      message: "User profile fetched successfully",
+      user,
       status: 200,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Error deleting profile",
+      message: "Error fetching user profile",
       error: error.message,
       status: 500,
     });
@@ -350,7 +304,5 @@ module.exports = {
   updateUser,
   updateUserPartial,
   deleteUser,
-  getProfile,
-  updateProfile,
-  deleteProfile,
+  getUserProfile,
 };

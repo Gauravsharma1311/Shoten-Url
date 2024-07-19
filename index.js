@@ -11,15 +11,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(
-  session({
-    secret: "gaurav",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
-
 app.use("/api/customers", customersRouter);
 app.use("/api/urls", urlRouter);
 app.use("/api/users", usersRouter);

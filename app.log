@@ -57,3 +57,28 @@
 2024-07-19T05:51:48.549Z [32minfo[39m: User authenticated: BabuBhai@gmial.com
 2024-07-19T06:35:20.425Z [32minfo[39m: Decoded token: {"userId":"6632450f-dc2a-4906-8a56-666cbcbc0026","iat":1721370916,"exp":1721457316}
 2024-07-19T06:35:20.433Z [32minfo[39m: User authenticated: BabuBhai@gmial.com
+2024-07-19T06:46:32.706Z [32minfo[39m: Decoded token: {"userId":"6632450f-dc2a-4906-8a56-666cbcbc0026","iat":1721371588,"exp":1721457988}
+2024-07-19T06:46:32.717Z [32minfo[39m: User authenticated: BabuBhai@gmial.com
+2024-07-19T06:46:34.803Z [32minfo[39m: Decoded token: {"userId":"6632450f-dc2a-4906-8a56-666cbcbc0026","iat":1721371588,"exp":1721457988}
+2024-07-19T06:46:34.806Z [32minfo[39m: User authenticated: BabuBhai@gmial.com
+2024-07-19T06:47:24.290Z [32minfo[39m: Decoded token: {"userId":"6632450f-dc2a-4906-8a56-666cbcbc0026","iat":1721371588,"exp":1721457988}
+2024-07-19T06:47:24.293Z [32minfo[39m: User authenticated: BabuBhai@gmial.com
+2024-07-19T06:48:21.824Z [32minfo[39m: Decoded token: {"userId":"6632450f-dc2a-4906-8a56-666cbcbc0026","iat":1721371588,"exp":1721457988}
+2024-07-19T06:48:21.897Z [32minfo[39m: User authenticated: BabuBhai@gmial.com
+2024-07-19T06:49:34.477Z [31merror[39m: Validation errors: [{"undefined":"Password must be at least 6 characters"}]
+2024-07-19T06:50:38.017Z [31merror[39m: Validation errors: [{"undefined":"Password must be at least 6 characters"}]
+2024-07-19T06:51:16.844Z [31merror[39m: Validation errors: [{"undefined":"Password must be at least 6 characters"}]
+2024-07-19T07:17:15.876Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721373328,"exp":1721459728}
+2024-07-19T07:19:15.619Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721373328,"exp":1721459728}
+2024-07-19T07:21:45.721Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721373328,"exp":1721459728}
+2024-07-19T08:54:30.703Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721373328,"exp":1721459728}
+2024-07-19T08:55:53.956Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721379350,"exp":1721465750}
+2024-07-19T08:56:35.267Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721379350,"exp":1721465750}
+2024-07-19T09:02:51.469Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721379350,"exp":1721465750}
+2024-07-19T09:06:58.667Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721379350,"exp":1721465750}
+2024-07-19T09:07:28.876Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721379350,"exp":1721465750}
+2024-07-19T09:08:11.613Z [32minfo[39m: User authenticated: {"userId":"e4ab955c-9c28-4f7c-bc46-9fae4e14a9ac","iat":1721380087,"exp":1721466487}
+2024-07-19T09:08:37.282Z [32minfo[39m: User authenticated: {"userId":"1","iat":1721380112,"exp":1721466512}
+2024-07-19T09:16:54.645Z [32minfo[39m: User authenticated: {"userId":"1","iat":1721380112,"exp":1721466512}
+2024-07-19T09:43:30.766Z [32minfo[39m: User authenticated: {"userId":"1","iat":1721380112,"exp":1721466512}
+2024-07-19T10:01:52.116Z [32minfo[39m: User authenticated: {"userId":"1","iat":1721382221,"exp":1721468621}
