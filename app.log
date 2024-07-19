@@ -55,3 +55,5 @@
 2024-07-19T05:51:07.867Z [31merror[39m: JWT verification error:
 2024-07-19T05:51:48.527Z [32minfo[39m: Decoded token: {"userId":"6632450f-dc2a-4906-8a56-666cbcbc0026","iat":1721367908,"exp":1721454308}
 2024-07-19T05:51:48.549Z [32minfo[39m: User authenticated: BabuBhai@gmial.com
+2024-07-19T06:35:20.425Z [32minfo[39m: Decoded token: {"userId":"6632450f-dc2a-4906-8a56-666cbcbc0026","iat":1721370916,"exp":1721457316}
+2024-07-19T06:35:20.433Z [32minfo[39m: User authenticated: BabuBhai@gmial.com
