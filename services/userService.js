@@ -52,7 +52,7 @@ const loginUser = async (username, password) => {
   }
 
   const token = jwt.sign({ userId: user.id }, config.secretKey, {
-    expiresIn: "24h",
+    expiresIn: "1m",
   });
   return token;
 };
