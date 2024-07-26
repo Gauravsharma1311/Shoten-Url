@@ -38,21 +38,23 @@ const createUser = async (
   return user;
 };
 
-const loginUser = async (username, password) => {
+// services/userService.js
+const loginUser = async (email, password) => {
   const user = await prisma.user.findUnique({
-    where: { username },
+    where: { email },
   });
+
   if (!user) {
-    throw new Error("Invalid username or password");
+    throw new Error("Invalid email or password");
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new Error("Invalid username or password");
+    throw new Error("Invalid email or password");
   }
 
   const token = jwt.sign({ userId: user.id }, config.secretKey, {
-    expiresIn: "1m",
+    expiresIn: "1h",
   });
   return token;
 };
@@ -86,18 +88,22 @@ const forgotPassword = async (email) => {
 };
 
 const resetPassword = async (resetToken, newPassword) => {
-  const user = await prisma.user.findUnique({
-    where: { resetToken },
+  const user = await prisma.user.findFirst({
+    where: {
+      resetToken: resetToken,
+      resetTokenExpiry: {
+        gt: new Date(),
+      },
+    },
   });
 
-  if (!user || user.resetTokenExpiry < new Date()) {
-    throw new Error("Invalid or expired token");
+  if (!user) {
+    throw new Error("Invalid or expired password reset token");
   }
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
-
   await prisma.user.update({
-    where: { resetToken },
+    where: { id: user.id },
     data: {
       password: hashedPassword,
       resetToken: null,
@@ -106,6 +112,34 @@ const resetPassword = async (resetToken, newPassword) => {
   });
 
   return true;
+};
+
+const logoutUser = async (req, res) => {
+  try {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.status(500).json({
+          message: "Error logging out",
+          status: 500,
+          error: err.message,
+        });
+      }
+
+      res.clearCookie("connect.sid");
+      return res.status(200).json({
+        message: "Logged out successfully",
+        status: 200,
+      });
+    });
+  } catch (error) {
+    console.error("Error logging out:", error);
+    return res.status(500).json({
+      message: "Error logging out",
+      error: error.message,
+      status: 500,
+    });
+  }
 };
 
 const fetchUsers = async (filters) => {
@@ -132,7 +166,7 @@ const updateUser = async (
   username
 ) => {
   const user = await prisma.user.update({
-    where: { id: parseInt(id) },
+    where: { id: id },
     data: { firstName, lastName, maidenName, email, phone, username },
   });
   return user;
@@ -140,7 +174,7 @@ const updateUser = async (
 
 const updateUserPartial = async (id, updateData) => {
   const user = await prisma.user.update({
-    where: { id: parseInt(id) },
+    where: { id: id },
     data: updateData,
   });
   return user;
@@ -148,31 +182,31 @@ const updateUserPartial = async (id, updateData) => {
 
 const deleteUser = async (id) => {
   const user = await prisma.user.delete({
-    where: { id: parseInt(id) },
+    where: { id: id },
   });
   return user;
 };
 
-const logoutUser = (req) => {
-  req.user = null;
-  return true;
-};
 const getUserProfile = async (userId) => {
-  console.log(`Querying database for userId: ${userId}`);
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+  return user;
+};
 
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId }, // Ensure the userId is a String
-    });
-    if (!user) {
-      console.log("User not found in the database");
-      throw new Error("User not found");
-    }
-    return user;
-  } catch (error) {
-    console.log(`Error fetching user profile: ${error.message}`);
-    throw error;
+const getUserPermissions = async (userId) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      role: { include: { permissions: { include: { actions: true } } } },
+    },
+  });
+
+  if (!user || !user.role) {
+    throw new Error("User or user role not found");
   }
+
+  return user.role.permissions;
 };
 
 module.exports = {
@@ -180,11 +214,12 @@ module.exports = {
   loginUser,
   forgotPassword,
   resetPassword,
+  logoutUser,
   fetchUsers,
   getUserById,
   updateUser,
   updateUserPartial,
   deleteUser,
-  logoutUser,
   getUserProfile,
+  getUserPermissions,
 };

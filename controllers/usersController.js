@@ -32,10 +32,10 @@ const createUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const token = await userService.loginUser(username, password);
+    const token = await userService.loginUser(email, password);
     res.json({ message: "Login successful", token, status: 200 });
   } catch (error) {
     res.status(500).json({
@@ -64,6 +64,7 @@ const forgotPassword = async (req, res) => {
     });
   }
 };
+
 const resetPassword = async (req, res) => {
   const { resetToken } = req.params;
   const { newPassword } = req.body;

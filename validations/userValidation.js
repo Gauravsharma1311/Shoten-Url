@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { check, body } = require("express-validator");
 
 const userValidation = [
   body("firstName").notEmpty().withMessage("First name is required"),
@@ -13,7 +13,7 @@ const userValidation = [
 ];
 
 const loginValidation = [
-  body("username").notEmpty().withMessage("Username is required"),
+  body("email").notEmpty().withMessage("Email is required"),
   body("password").notEmpty().withMessage("Password is required"),
 ];
 

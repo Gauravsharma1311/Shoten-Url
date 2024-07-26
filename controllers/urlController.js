@@ -4,18 +4,26 @@ const storeURL = async (req, res) => {
   const { userId, url } = req.body;
 
   try {
-    const newUrl = await urlService.storeURL(userId, url); // Pass customerId to the service
+    const newUrl = await urlService.storeURL(userId, url);
     res.status(201).json({
       message: "URL successfully stored",
       url: newUrl,
       status: 201,
     });
   } catch (error) {
-    res.status(400).json({
-      message: "Error storing URL",
-      error: error.message,
-      status: 400,
-    });
+    if (error.message === "URL already exists for this user") {
+      res.status(400).json({
+        message: "Error storing URL",
+        error: error.message,
+        status: 400,
+      });
+    } else {
+      res.status(500).json({
+        message: "Error storing URL",
+        error: error.message,
+        status: 500,
+      });
+    }
   }
 };
 
