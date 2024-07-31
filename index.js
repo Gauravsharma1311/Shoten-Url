@@ -6,6 +6,7 @@ const session = require("express-session");
 const customersRouter = require("./routes/customersRouter");
 const urlRouter = require("./routes/urlRouter");
 const usersRouter = require("./routes/usersRouter");
+const authRouter = require("./routes/authRouter");
 const cors = require("cors");
 
 const app = express();
@@ -20,18 +21,13 @@ app.use(
     cookie: { secure: false },
   })
 );
-const corsOptions = {
-  origin: "http://localhost:3000", // your frontend URL
-  methods: ["GET", "POST", "PUT", "DELETE"], // allowed methods
-  allowedHeaders: ["Content-Type", "Authorization"], // allowed headers
-  credentials: true, // enable Access-Control-Allow-Credentials
-};
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use("/api/customers", customersRouter);
 app.use("/api/urls", urlRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/auth", authRouter);
 
 app.listen(config.port, () => {
   console.log(`Server running on port ${config.port}`);

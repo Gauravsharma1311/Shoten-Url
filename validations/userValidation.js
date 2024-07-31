@@ -12,9 +12,4 @@ const userValidation = [
     .withMessage("Password must be at least 6 characters"),
 ];
 
-const loginValidation = [
-  body("email").notEmpty().withMessage("Email is required"),
-  body("password").notEmpty().withMessage("Password is required"),
-];
-
-module.exports = { userValidation, loginValidation };
+module.exports = { userValidation };
