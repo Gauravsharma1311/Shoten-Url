@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { check, body } = require("express-validator");
 
 const userValidation = [
   body("firstName").notEmpty().withMessage("First name is required"),
@@ -12,9 +12,4 @@ const userValidation = [
     .withMessage("Password must be at least 6 characters"),
 ];
 
-const loginValidation = [
-  body("username").notEmpty().withMessage("Username is required"),
-  body("password").notEmpty().withMessage("Password is required"),
-];
-
-module.exports = { userValidation, loginValidation };
+module.exports = { userValidation };
