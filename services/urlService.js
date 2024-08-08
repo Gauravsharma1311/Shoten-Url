@@ -17,8 +17,64 @@ const storeURL = async (userId, url) => {
 };
 
 const fetchUrls = async () => {
-  const urls = await prisma.url.findMany();
-  return urls;
+  return await prisma.url.findMany();
 };
 
-module.exports = { storeURL, fetchUrls };
+const fetchUrlById = async (id) => {
+  return await prisma.url.findUnique({
+    where: { id },
+  });
+};
+
+const updateURL = async (id, url) => {
+  try {
+    return await prisma.url.update({
+      where: { id },
+      data: { url },
+    });
+  } catch (error) {
+    if (error.code === "P2025") {
+      throw new Error("URL not found");
+    }
+    throw error;
+  }
+};
+
+const deleteURL = async (id) => {
+  try {
+    const deletedUrl = await prisma.url.delete({
+      where: { id },
+    });
+    return deletedUrl;
+  } catch (error) {
+    if (error.code === "P2025") {
+      throw new Error("URL not found");
+    }
+    throw error;
+  }
+};
+
+const getUserByUsername = async (username) => {
+  return await prisma.user.findUnique({
+    where: { username },
+  });
+};
+
+const fetchUsernames = async () => {
+  return await prisma.user.findMany({
+    select: {
+      id: true,
+      username: true,
+    },
+  });
+};
+
+module.exports = {
+  storeURL,
+  fetchUrls,
+  fetchUrlById,
+  updateURL,
+  deleteURL,
+  getUserByUsername,
+  fetchUsernames,
+};

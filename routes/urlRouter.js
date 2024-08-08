@@ -13,5 +13,15 @@ router.post(
   urlController.storeURL
 );
 router.get("/", authenticateToken, urlController.fetchUrls);
+router.get("/usernames", authenticateToken, urlController.fetchUsernames);
+router.get("/:id", authenticateToken, urlController.fetchUrlById); // Fetch URL by ID
+router.put(
+  "/:id",
+  authenticateToken,
+  urlValidation,
+  validate,
+  urlController.updateURL
+);
+router.delete("/:id", authenticateToken, urlController.deleteURL);
 
 module.exports = router;
