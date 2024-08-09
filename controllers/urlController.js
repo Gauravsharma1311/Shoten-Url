@@ -28,6 +28,7 @@ const storeURL = async (req, res) => {
   }
 };
 
+// Fetch URLs and include shortenedUrl in the response
 const fetchUrls = async (req, res) => {
   try {
     const urls = await urlService.fetchUrls();

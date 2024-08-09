@@ -1,11 +1,30 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+const generateShortenedUrl = () => {
+  return Math.random().toString(36).substring(2, 8);
+};
+
 const storeURL = async (userId, url) => {
   try {
-    const newUrl = await prisma.url.create({
-      data: { userId: userId.toString(), url },
+    let shortenedUrl = generateShortenedUrl();
+
+    // Ensure the shortened URL is unique
+    let existingUrl = await prisma.url.findUnique({
+      where: { shortenedUrl },
     });
+
+    while (existingUrl) {
+      shortenedUrl = generateShortenedUrl();
+      existingUrl = await prisma.url.findUnique({
+        where: { shortenedUrl },
+      });
+    }
+
+    const newUrl = await prisma.url.create({
+      data: { userId: userId.toString(), url, shortenedUrl },
+    });
+
     return newUrl;
   } catch (error) {
     if (error.code === "P2002") {
