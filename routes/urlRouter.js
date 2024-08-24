@@ -13,8 +13,7 @@ router.post(
   urlController.storeURL
 );
 router.get("/", authenticateToken, urlController.fetchUrls);
-router.get("/usernames", authenticateToken, urlController.fetchUsernames);
-router.get("/:id", authenticateToken, urlController.fetchUrlById); // Fetch URL by ID
+router.get("/:id", authenticateToken, urlController.fetchUrlById);
 router.put(
   "/:id",
   authenticateToken,

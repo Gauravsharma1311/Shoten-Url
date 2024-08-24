@@ -22,14 +22,18 @@ const storeURL = async (userId, url) => {
     }
 
     const newUrl = await prisma.url.create({
-      data: { userId: userId.toString(), url, shortenedUrl },
+      data: {
+        url,
+        shortenedUrl,
+        userId, // Include userId in the data object
+      },
     });
 
     return newUrl;
   } catch (error) {
     if (error.code === "P2002") {
       // Unique constraint violation
-      throw new Error("URL already exists for this user");
+      throw new Error("URL already exists");
     }
     throw error;
   }

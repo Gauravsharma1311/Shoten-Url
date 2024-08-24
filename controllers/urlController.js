@@ -1,18 +1,26 @@
 const urlService = require("../services/urlService");
 
 const storeURL = async (req, res) => {
-  const { userId, url } = req.body;
+  const { url } = req.body;
+  const userId = req.user.userId; // Get userId from authenticated user
 
   try {
     const newUrl = await urlService.storeURL(userId, url);
     res.status(201).json({
       message: "URL successfully stored",
-      url: newUrl,
+      url: {
+        id: newUrl.id,
+        url: newUrl.url,
+        shortenedUrl: newUrl.shortenedUrl,
+        userId: newUrl.userId, // Include userId in the response
+        createdAt: newUrl.createdAt,
+        updatedAt: newUrl.updatedAt,
+      },
       status: 201,
     });
   } catch (error) {
     console.error(`Error storing URL: ${error.message}`);
-    if (error.message === "URL already exists for this user") {
+    if (error.message === "URL already exists") {
       res.status(400).json({
         message: "Error storing URL",
         error: error.message,
