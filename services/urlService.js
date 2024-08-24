@@ -39,8 +39,18 @@ const storeURL = async (userId, url) => {
   }
 };
 
-const fetchUrls = async () => {
-  return await prisma.url.findMany();
+const fetchUrls = async (filter) => {
+  const whereClause = {};
+
+  if (filter.url) {
+    whereClause.url = {
+      contains: filter.url,
+    };
+  }
+
+  return await prisma.url.findMany({
+    where: whereClause,
+  });
 };
 
 const fetchUrlById = async (id) => {
