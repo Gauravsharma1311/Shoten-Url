@@ -302,3 +302,38 @@
 2024-08-24T11:56:29.280Z [32minfo[39m: User authenticated: {"userId":"461716c4-abbe-4841-9c9d-878fb6903c34","iat":1724499368,"exp":1724502968}
 2024-08-24T11:56:30.201Z [32minfo[39m: User authenticated: {"userId":"461716c4-abbe-4841-9c9d-878fb6903c34","iat":1724499368,"exp":1724502968}
 2024-08-24T11:56:39.653Z [32minfo[39m: User authenticated: {"userId":"461716c4-abbe-4841-9c9d-878fb6903c34","iat":1724499368,"exp":1724502968}
+2024-08-25T07:08:52.879Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:09:35.428Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:09:36.159Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:09:41.877Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:10:00.145Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:10:00.910Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:11:01.730Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:11:02.493Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:11:20.596Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:11:21.402Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:11:36.186Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:17:12.581Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:28:06.578Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:28:38.547Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:28:52.577Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:29:16.134Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:29:20.256Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724567609,"exp":1724571209}
+2024-08-25T07:44:54.402Z [31merror[39m: JWT verification error: jwt expired
+2024-08-25T07:44:57.623Z [31merror[39m: JWT verification error: jwt expired
+2024-08-25T07:44:57.644Z [31merror[39m: JWT verification error: jwt expired
+2024-08-25T07:45:05.534Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:10:17.978Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:10:18.953Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:16:34.642Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:18:04.697Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:18:30.713Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:18:35.370Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:18:35.430Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:18:36.706Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:19:35.656Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:19:42.236Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:19:42.262Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:19:43.796Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:22:26.904Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}
+2024-08-25T08:29:58.063Z [32minfo[39m: User authenticated: {"userId":"d9a2ec40-054b-4c9b-b8e8-bfed50efe27a","iat":1724571903,"exp":1724575503}

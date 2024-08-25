@@ -2,7 +2,15 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const generateShortenedUrl = () => {
-  return Math.random().toString(36).substring(2, 8);
+  const length = 5; // Length of the shortened URL
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let shortenedUrl = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    shortenedUrl += characters[randomIndex];
+  }
+  return shortenedUrl;
 };
 
 const storeURL = async (userId, url) => {
