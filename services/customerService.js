@@ -1,41 +1,18 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const createCustomer = async (firstName, lastName, email) => {
-  const customer = await prisma.customer.create({
-    data: { firstName, lastName, email },
-  });
-  return customer;
-};
+const createCustomer = (firstName, lastName, email) =>
+  prisma.customer.create({ data: { firstName, lastName, email } });
 
-const fetchCustomers = async (filters) => {
-  const customers = await prisma.customer.findMany({
-    where: filters,
-  });
-  return customers;
-};
+const fetchCustomers = (filters) =>
+  prisma.customer.findMany({ where: filters });
 
-const getCustomerById = async (id) => {
-  const customer = await prisma.customer.findUnique({
-    where: { id: id },
-  });
-  return customer;
-};
+const getCustomerById = (id) => prisma.customer.findUnique({ where: { id } });
 
-const updateCustomer = async (id, firstName, lastName, email) => {
-  const customer = await prisma.customer.update({
-    where: { id: id },
-    data: { firstName, lastName, email },
-  });
-  return customer;
-};
+const updateCustomer = (id, data) =>
+  prisma.customer.update({ where: { id }, data });
 
-const deleteCustomer = async (id) => {
-  const customer = await prisma.customer.delete({
-    where: { id: id },
-  });
-  return customer;
-};
+const deleteCustomer = (id) => prisma.customer.delete({ where: { id } });
 
 module.exports = {
   createCustomer,
