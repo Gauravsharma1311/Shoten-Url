@@ -1,127 +1,102 @@
-const { PrismaClient } = require("@prisma/client");
 const customerService = require("../services/customerService");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createCustomer = async (req, res) => {
-  const { firstName, lastName, email } = req.body;
-
   try {
     const customer = await customerService.createCustomer(
-      firstName,
-      lastName,
-      email
+      req.body.firstName,
+      req.body.lastName,
+      req.body.email
     );
-    res.status(201).json({
-      message: "Customer successfully created",
-      customer,
-      status: 201,
-    });
+    res
+      .status(201)
+      .json({ message: "Customer created", customer, status: 201 });
   } catch (error) {
-    res.status(400).json({
-      message: "Error creating customer",
-      error: error.message,
-      status: 400,
-    });
+    res
+      .status(400)
+      .json({ message: "Error creating customer", error: error.message });
   }
 };
 
 const fetchCustomers = async (req, res) => {
-  const filters = req.query;
-
+  const { pageNumber = 1, pageSize = 10, ...filters } = req.query;
   try {
-    const customers = await customerService.fetchCustomers(filters);
+    const [totalCount, customers] = await prisma.$transaction([
+      prisma.customer.count({ where: filters }),
+      prisma.customer.findMany({
+        where: filters,
+        skip: (pageNumber - 1) * pageSize,
+        take: parseInt(pageSize),
+      }),
+    ]);
     res.json({
-      message: "Customers fetched successfully",
-      customers,
+      message: "Customers fetched",
+      data: {
+        customers,
+        pagination: {
+          pageNumber,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+        },
+      },
       status: 200,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Error fetching customers",
-      error: error.message,
-      status: 500,
-    });
+    res
+      .status(500)
+      .json({ message: "Error fetching customers", error: error.message });
   }
 };
 
 const getCustomerById = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const customer = await customerService.getCustomerById(id);
-    if (!customer) {
-      return res.status(404).json({
-        message: "Customer not found",
-        status: 404,
-      });
-    }
-    res.json({
-      message: "Customer fetched successfully",
-      customer,
-      status: 200,
-    });
+    const customer = await customerService.getCustomerById(req.params.id);
+    customer
+      ? res.json({ data: { customer }, status: 200 })
+      : res.status(404).json({ message: "Customer not found", status: 404 });
   } catch (error) {
-    res.status(500).json({
-      message: "Error fetching customer",
-      error: error.message,
-      status: 500,
-    });
+    res
+      .status(500)
+      .json({ message: "Error fetching customer", error: error.message });
   }
 };
 
 const updateCustomer = async (req, res) => {
-  const { id } = req.params;
-  const { firstName, lastName, email } = req.body;
-
   try {
     const updatedCustomer = await customerService.updateCustomer(
-      id,
-      firstName,
-      lastName,
-      email
+      req.params.id,
+      req.body
     );
-    if (!updatedCustomer) {
-      return res.status(404).json({
-        message: "Customer not found",
-        status: 404,
-      });
-    }
-    res.json({
-      message: "Customer updated successfully",
-      customer: updatedCustomer,
-      status: 200,
-    });
+    updatedCustomer
+      ? res.json({
+          message: "Customer updated",
+          customer: updatedCustomer,
+          status: 200,
+        })
+      : res.status(404).json({ message: "Customer not found", status: 404 });
   } catch (error) {
-    res.status(500).json({
-      message: "Error updating customer",
-      error: error.message,
-      status: 500,
-    });
+    res
+      .status(500)
+      .json({ message: "Error updating customer", error: error.message });
   }
 };
 
 const deleteCustomer = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const deletedCustomer = await customerService.deleteCustomer(id);
-    if (!deletedCustomer) {
-      return res.status(404).json({
-        message: "Customer not found",
-        status: 404,
-      });
-    }
-    res.json({
-      message: "Customer deleted successfully",
-      customer: deletedCustomer,
-      status: 200,
-    });
+    const deletedCustomer = await customerService.deleteCustomer(req.params.id);
+    deletedCustomer
+      ? res.json({
+          message: "Customer deleted",
+          customer: deletedCustomer,
+          status: 200,
+        })
+      : res.status(404).json({ message: "Customer not found", status: 404 });
   } catch (error) {
-    res.status(500).json({
-      message: "Error deleting customer",
-      error: error.message,
-      status: 500,
-    });
+    res
+      .status(500)
+      .json({ message: "Error deleting customer", error: error.message });
   }
 };
 

@@ -33,12 +33,13 @@ model User {
 }
 
 model Url {
-  id         String   @id @default(uuid())
-  url        String
-  userId     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id])
+  id           String   @id @default(uuid())
+  url          String   @unique
+  shortenedUrl String   @unique
+  userId       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, url])
 }
